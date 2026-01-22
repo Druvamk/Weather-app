@@ -1,14 +1,11 @@
 import React, { useState } from "react";
-import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { useAppSelector } from "../store/hooks";
 import { useGetWeatherByCityQuery } from "../store/api/weatherApi";
 import SearchBar from "./SearchBar";
 import WeatherCard from "./WeatherCard";
-import FavoritesList from "./FavoritesList";
 import styles from "./WeatherDashboard.module.css";
-import { addFavorite, removeFavorite } from "../store/api/favoritesSlice";
 
 const WeatherDashboard: React.FC = () => {
-  const dispatch = useAppDispatch();
   const { cities: favorites } = useAppSelector((state) => state.favorites);
   const [searchCity, setSearchCity] = useState<string>("Vijayapura");
   const [showFavorites, setShowFavorites] = useState<boolean>(false);
@@ -29,37 +26,6 @@ const WeatherDashboard: React.FC = () => {
       setShowFavorites(false);
     }
   };
-
-  const handleToggleFavorite = (): void => {
-    if (weather) {
-      const isFavorited = favorites.some((fav) => fav.id === weather.id);
-      if (isFavorited) {
-        dispatch(removeFavorite(weather.id));
-      } else {
-        dispatch(
-          addFavorite({
-            id: weather.id,
-            name: weather.name,
-            country: weather.sys.country,
-          }),
-        );
-      }
-    }
-  };
-
-  const handleRemoveFavorite = (id: number | string): void => {
-    dispatch(
-      removeFavorite(typeof id === "string" ? parseInt(id as string, 10) : id),
-    );
-  };
-
-  const handleCitySelect = (cityName: string): void => {
-    setSearchCity(cityName);
-  };
-
-  const isFavorite = weather
-    ? favorites.some((fav) => fav.id === weather.id)
-    : false;
 
   const weatherData = weather
     ? {
@@ -88,27 +54,12 @@ const WeatherDashboard: React.FC = () => {
 
       <SearchBar onSearch={handleSearch} />
 
-      {showFavorites && (
-        <FavoritesList
-          favorites={favorites}
-          onCitySelect={handleCitySelect}
-          onRemoveFavorite={handleRemoveFavorite}
-        />
-      )}
-
       {isLoading && <div className={styles.loading}>Loading weather...</div>}
       {error && (
         <div className={styles.error}>City not found. Try another city.</div>
       )}
 
-      {weatherData && (
-        <WeatherCard
-          weather={weatherData}
-          isLoading={false}
-          onToggleFavorite={handleToggleFavorite}
-          isFavorite={isFavorite}
-        />
-      )}
+      {weatherData && <WeatherCard weather={weatherData} isLoading={false} />}
     </div>
   );
 };
