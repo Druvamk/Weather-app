@@ -1,25 +1,22 @@
 import React from "react";
 import styles from "./WeatherCard.module.css";
 import type { WeatherCardProps } from "../types/types";
+import { addFavorite, removeFavorite } from "../store/api/favoritesSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 const WeatherCard: React.FC<WeatherCardProps> = ({ weather, isLoading }) => {
+  const dispatch = useAppDispatch();
+  const data = useAppSelector((state) => state.favorites.cities);
+  const isFavorite = data.some((city) => city.id === weather.id);
+  console.log(data);
   if (isLoading) {
-    return (
-      <div className={styles.loadingCard}>
-        <div className={styles.spinner}></div>
-        <p>Loading weather details...</p>
-      </div>
-    );
+    return <p>Loading weather details...</p>;
   }
   if (!weather) {
-    return (
-      <div className={styles.emptyState}>
-        <p>No weather data available</p>
-      </div>
-    );
+    return <p>No weather data available</p>;
   }
 
-  const { name, main, weather: weatherData, sys, wind, clouds } = weather;
+  const { name, main, weather: weatherData, wind, clouds } = weather;
   const temp = Math.round(main.temp);
   const feelsLike = Math.round(main.feels_like);
 
@@ -28,9 +25,29 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weather, isLoading }) => {
       <div className={styles.gradientBg}></div>
       <div className={styles.cardContent}>
         <div className={styles.header}>
-          <div className={styles.location}>
-            <h1 className={styles.cityName}>{name}</h1>
-            <span className={styles.country}>{sys.country}</span>
+          <h1 className={styles.cityName}>{name}</h1>
+
+          <div>
+            <button
+              className={`${styles.favoriteBtn} ${
+                isFavorite ? styles.active : ""
+              }`}
+              onClick={() => {
+                if (isFavorite) {
+                  dispatch(removeFavorite(weather.id));
+                } else {
+                  dispatch(
+                    addFavorite({
+                      id: weather.id,
+                      name: weather.name,
+                      country: weather.sys.country,
+                    }),
+                  );
+                }
+              }}
+            >
+              {isFavorite ? "★" : "☆"}
+            </button>
           </div>
         </div>
 
@@ -40,7 +57,6 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weather, isLoading }) => {
             <span className={styles.tempUnit}>°C</span>
           </div>
         </div>
-
         <p className={styles.description}>{weatherData[0].description}</p>
 
         <div className={styles.detailsGrid}>

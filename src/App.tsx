@@ -5,6 +5,7 @@ import SearchBar from "./components/SearchBar";
 import WeatherCard from "./components/WeatherCard";
 import "./App.css";
 import { useGetWeatherByCityQuery } from "./store/api/weatherApi";
+import FavoritesList from "./components/FavoritesList";
 
 const App: React.FC = () => {
   const [currentCity, setCurrentCity] = useState<string>("Vijayapura");
@@ -73,6 +74,7 @@ const App: React.FC = () => {
 
           {/* SUCCESS STATE */}
           {weather && <WeatherCard weather={weather} isLoading={false} />}
+          <FavoritesList />
         </div>
       </div>
     </Provider>
