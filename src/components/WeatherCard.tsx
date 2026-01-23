@@ -20,10 +20,8 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weather, isLoading }) => {
   }
 
   const { name, main, weather: weatherData, sys, wind, clouds } = weather;
-  const iconUrl = `https://openweathermap.org/img/wn/${weatherData[0].icon}@1x.png`;
   const temp = Math.round(main.temp);
   const feelsLike = Math.round(main.feels_like);
-  console.log(iconUrl);
 
   return (
     <div className={styles.weatherCard}>
@@ -37,11 +35,6 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weather, isLoading }) => {
         </div>
 
         <div className={styles.mainWeather}>
-          <img
-            src={iconUrl}
-            alt={weatherData[0].description}
-            className={styles.weatherIcon}
-          />
           <div className={styles.temperature}>
             <span className={styles.tempValue}>{temp}</span>
             <span className={styles.tempUnit}>°C</span>
