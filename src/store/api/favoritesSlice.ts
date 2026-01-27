@@ -28,7 +28,7 @@ const favoritesSlice = createSlice({
   reducers: {
     addFavorite: (state, action: PayloadAction<FavoriteCity>) => {
       if (!state.cities.find((city) => city.id === action.payload.id)) {
-        state.cities.unshift(action.payload);
+        state.cities.push(action.payload);
         saveFavorites(state.cities);
       }
     },
